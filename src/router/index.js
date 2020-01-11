@@ -7,6 +7,9 @@ Vue.use(VueRouter)
 const routes = [{
         path: '/',
         name: 'home',
+        meta: {
+            title: "首页"
+        },
         component: Home
     },
     {
@@ -29,7 +32,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     document.title = to.meta.title
     next()
-        
+
 })
 
 export default router

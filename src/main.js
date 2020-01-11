@@ -2,16 +2,18 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-import Vant from 'vant';
-import 'vant/lib/index.css';
 import service from "./http"
 import dayjs from 'dayjs'
+import VueRouter from 'vue-router';
+import ViewUI from 'view-design';
+import 'view-design/dist/styles/iview.css';
+import api from './http/api'
 
-Vue.use(Vant);
-Vue.use(ElementUI);
-Vue.prototype.$axios = service
+Vue.use(VueRouter);
+Vue.use(ViewUI);
+
+
+Vue.prototype.$api = api
 Vue.prototype.$dayjs = dayjs
 Vue.config.productionTip = false
 
