@@ -23,4 +23,15 @@ export default {
   text-align: center;
   border-radius: 2px;
 }
+.contentBottom {
+  padding-bottom: 35px;
+}
+.flex {
+  display: flex;
+}
+.textover {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background-color: #F8F8F8;">
     <Headers></Headers>
     <div class="bg"></div>
   </div>
@@ -9,7 +9,8 @@
 import Headers from "../../src/components/Headers";
 export default {
   data() {
-    return {};
+    return {
+    };
   },
   components: { Headers },
   methods: {},
@@ -31,7 +32,12 @@ export default {
   },
   watch: {},
   computed: {},
-  filters: {}
+  filters: {},
+  // beforeRouteEnter(to, from, next) {
+  //   next(vm => {
+  //     vm.$store.state.searchValue = from.query.keyword;
+  //   });
+  // }
 };
 </script>
 
