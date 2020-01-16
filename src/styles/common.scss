@@ -1,3 +1,13 @@
-.ivu-icon {
-    font-size: 16px !important;
+.ivu__icon {
+    .ivu-icon {
+        font-size: 16px !important;
+    }
+}
+
+.ivu_icon {
+    .ivu-icon {
+        line-height: inherit !important;
+        position: absolute !important;
+        right: 13px !important;
+    }
 }

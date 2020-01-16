@@ -1,6 +1,6 @@
 <template>
  <div>
-
+搜索后跳转
  </div>
 </template>
 

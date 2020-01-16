@@ -289,8 +289,8 @@ export default {
       }
       //网站导航
       .header-nav-site {
-        width: 1200px;
-        max-width: 1200px;
+        width: 1190px;
+        max-width: 1190px;
         min-width: 1080px;
         box-sizing: border-box;
         border-top-left-radius: 4px;

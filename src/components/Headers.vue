@@ -3,9 +3,9 @@
     <div>
       <div class="header-bar">
         <!-- 左边 -->
-        <div class="header-bar-position">
+        <div class="header-bar-position ivu__icon">
           <Icon type="md-pin" />
-          <div>{{city}}</div>
+          <div>{{this.$store.state.city}}</div>
           <div class="change-city">切换城市</div>
           <div class="near-citys">
             [
@@ -25,13 +25,13 @@
         <Right></Right>
       </div>
     </div>
-    <div style="background-color: #fff;">
+    <div style="background-color: rgb(255, 255, 255);box-shadow: 0 2px 27px 0 rgba(0,0,0,0.10);">
       <div class="header-content contentBottom">
         <div class="header-title">
           <img src="//s0.meituan.net/bs/fe-web-meituan/fa5f0f0/img/logo.png" alt />
         </div>
         <div class="header-search">
-          <Search :city="city"></Search>
+          <Search :city="this.$store.state.city"></Search>
         </div>
       </div>
     </div>
@@ -44,7 +44,7 @@ import Right from "../components/Headers/Right";
 export default {
   data() {
     return {
-      city: "",
+      // city: "",
       areasList: []
     };
   },
@@ -57,9 +57,9 @@ export default {
         .then(res => {
           if (res.code === 200) {
             // console.log(res);
-            this.city = JSON.parse(res.data).city;
+            this.$store.state.city = JSON.parse(res.data).city;
             // this.city = eval("(" + res.data + ")").city;
-            this.city = this.city.slice(0, -1);
+            this.$store.state.city = this.$store.state.city.slice(0, -1);
             // console.log(this.city);
             this.getHotCity();
           }
@@ -69,16 +69,18 @@ export default {
         });
     },
     getHotCity() {
-      this.$api
-        .getHotCity(this.city)
-        .then(res => {
-          if (res.code === 200) {
-            this.areasList = res.data.areas;
-          }
-        })
-        .catch(err => {
-          console.log(object);
-        });
+      if (this.$store.state.city !== "") {
+        this.$api
+          .getHotCity(this.$store.state.city)
+          .then(res => {
+            if (res.code === 200) {
+              this.areasList = res.data.areas;
+            }
+          })
+          .catch(err => {
+            console.log(object);
+          });
+      }
     },
     //更改城市
     change(val) {
@@ -86,7 +88,7 @@ export default {
         return item.type !== val.type;
       });
       this.areasList.push(val);
-      this.city = val.type;
+      this.$store.state.city = val.type;
     }
   },
   mounted() {
@@ -100,7 +102,7 @@ export default {
 
 <style scoped lang='scss'>
 .header-bar {
-  max-width: 1200px;
+  max-width: 1190px;
   min-width: 1080px;
   height: 40px;
   margin: 0 auto;
@@ -156,7 +158,7 @@ export default {
   }
 }
 .header-content {
-  max-width: 1200px;
+  max-width: 1190px;
   min-width: 1080px;
   height: 157px;
   margin: 0 auto;

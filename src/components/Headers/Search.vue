@@ -59,7 +59,7 @@ export default {
   data() {
     return {
       flag: false,
-      value: '',
+      value: "",
       hotList: [],
       // historyList: [],
       inputList: []
@@ -82,16 +82,20 @@ export default {
     },
     // 获取当地热门
     getHotPlace() {
-      this.$api
-        .getHotPlace(this.city)
-        .then(res => {
-          if (res.code === 200) {
-            this.hotList = res.data.result;
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      if (this.city !== "") {
+        setTimeout(() => {
+          this.$api
+            .getHotPlace(this.city)
+            .then(res => {
+              if (res.code === 200) {
+                this.hotList = res.data.result;
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }, 1000);
+      }
     },
     // 创建历史记录
     history(val) {
@@ -110,7 +114,7 @@ export default {
         }
       }
       this.$router.push({
-        name: "details",
+        name: "search",
         query: { keyword: val }
       });
     },
@@ -149,8 +153,8 @@ export default {
     }
   },
   watch: {
-    '$store.state.searchValue':function(){
-      this.value=this.$store.state.searchValue
+    "$store.state.searchValue": function() {
+      this.value = this.$store.state.searchValue;
     }
   },
   computed: {},

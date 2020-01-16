@@ -1,18 +1,22 @@
 <template>
-  <div style="background-color: #F8F8F8;">
+  <div class="bgColor">
     <Headers></Headers>
-    <div class="bg"></div>
+    <BannerContainer></BannerContainer>
+    <HaveStyle></HaveStyle>
+    <Footers></Footers>
   </div>
 </template>
 
 <script>
 import Headers from "../../src/components/Headers";
+import BannerContainer from "../../src/components/BannerContainer";
+import HaveStyle from "../../src/components/HaveStyle";
+import Footers from "../../src/components/Footers";
 export default {
   data() {
-    return {
-    };
+    return {};
   },
-  components: { Headers },
+  components: { Headers, BannerContainer, HaveStyle, Footers },
   methods: {},
   mounted() {
     //注册
@@ -32,7 +36,7 @@ export default {
   },
   watch: {},
   computed: {},
-  filters: {},
+  filters: {}
   // beforeRouteEnter(to, from, next) {
   //   next(vm => {
   //     vm.$store.state.searchValue = from.query.keyword;
@@ -42,4 +46,14 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.bgColor {
+  background-color: #f8f8f8;
+  // position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  // width: 100%;
+  // height: 100%;
+}
 </style>
