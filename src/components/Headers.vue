@@ -18,8 +18,8 @@
             ]
           </div>
           <div class="user-entry">
-            <div class="user-up">立即登录</div>
-            <div class="user-register">注册</div>
+            <div class="user-up" @click="login">立即登录</div>
+            <div class="user-register" @click="register">注册</div>
           </div>
         </div>
         <Right></Right>
@@ -89,6 +89,12 @@ export default {
       });
       this.areasList.push(val);
       this.$store.state.city = val.type;
+    },
+    login() {
+      this.$router.push("/login");
+    },
+    register() {
+      this.$router.push("/register");
     }
   },
   mounted() {

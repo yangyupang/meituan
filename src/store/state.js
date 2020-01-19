@@ -4,4 +4,6 @@ export default {
     //搜索值
     searchValue: "",
     city: "",
+    //用户名
+    userName: "",
 }

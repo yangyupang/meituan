@@ -11,3 +11,24 @@
         right: 13px !important;
     }
 }
+
+//普通方式登录
+.form-common {
+    .ivu-form-item {
+        margin-top: 20px !important;
+        margin-bottom: 10px !important;
+    }
+    .ivu-form-item-content {
+        margin-left: 0 !important;
+    }
+    .ivu-input-suffix {
+        z-index: 3 !important;
+    }
+    .ivu-btn-warning {
+        color: #222;
+        background-color: #FFCC00;
+        border-color: #FFCC00;
+        width: 270px;
+        font-weight: 600;
+    }
+}

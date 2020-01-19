@@ -11,7 +11,13 @@ export default {
   data() {
     return {};
   },
-  components: {}
+  components: {},
+  mounted() {
+    // console.log(localStorage.getItem("username"));
+    if (localStorage.getItem("username") !== null) {
+      this.$store.state.userName = localStorage.getItem("username");
+    }
+  }
 };
 </script>
 <style lang="scss">

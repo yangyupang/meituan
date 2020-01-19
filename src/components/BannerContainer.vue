@@ -69,7 +69,7 @@
         <div class="microphone" :style="{display:(showImg? 'block':'none')}">
           <img src="//p0.meituan.net/codeman/e473bb428f070321269b23370ff02ba956209.jpg" alt />
         </div>
-        <div class="login">
+        <div class="login" v-if="this.$store.state.userName ===''">
           <div class="default" style="display:block">
             <div class="nologin-img">
               <img src="//s0.meituan.net/bs/fe-web-meituan/2d05c2b/img/avatar.jpg" alt />
@@ -77,6 +77,26 @@
             <div class="user-name">Hi！您好</div>
             <div class="btn-register" @click="register">注册</div>
             <div class="btn-login" @click="login">立即登录</div>
+          </div>
+        </div>
+        <div class="have-user" v-else>
+          <div class="default">
+            <div class="setting">
+              <Icon type="ios-settings-outline" style="font-size: 22px;" />
+            </div>
+            <div class="login-img">
+              <img src="//s0.meituan.net/bs/fe-web-meituan/e3064a3/img/head-img.png" alt />
+            </div>
+            <div class="user-name">
+              <span class="name">{{this.$store.state.userName}}</span>
+              <img class="user-vip" src="../assets/img/vip.svg" />
+            </div>
+            <Row class="login-container">
+              <Col span="8" v-for="(item,index) in containerimg" :key="index">
+                <i class="iconfont icon-color" :class="`icon-${item.type}`"></i>
+                <div class="container-title">{{item.title}}</div>
+              </Col>
+            </Row>
           </div>
         </div>
         <div class="in-hotel">
@@ -118,7 +138,29 @@ export default {
         "https://p1.meituan.net/travelcube/01d2ab1efac6e2b7adcfcdf57b8cb5481085686.png"
       ],
       showDetail: -1,
-      showImg: true
+      showImg: true,
+      containerimg: [
+        {
+          type: "order",
+          title: "我的订单"
+        },
+        {
+          type: "collection",
+          title: "我的收藏"
+        },
+        {
+          type: "ticket",
+          title: "抵用券"
+        },
+        {
+          type: "money",
+          title: "余额"
+        },
+        {
+          type: "more",
+          title: "更多"
+        }
+      ]
     };
   },
   components: {},
@@ -170,6 +212,7 @@ export default {
     //   let offsetWid = document.documentElement.clientWidth;
     //   // console.log(offsetWid);
     // });
+    // console.log(this.$store.state.userName);
   },
   watch: {},
   computed: {},
@@ -427,6 +470,62 @@ export default {
           cursor: pointer;
           &:hover {
             background-color: rgb(246, 246, 246);
+          }
+        }
+      }
+    }
+    .have-user {
+      width: 228px;
+      height: 238px;
+      background-color: #ffff;
+      border: 1px solid #e5e5e5;
+      text-align: center;
+      .default {
+        padding-top: 30px;
+        .setting {
+          position: absolute;
+          top: 5px;
+          right: 8px;
+        }
+        .login-img {
+          border-radius: 30px;
+          margin: 0px auto 4px auto;
+          img {
+            width: 47px;
+            height: 47px;
+            border-radius: 50%;
+            border: 4px solid #e5e5e5;
+          }
+        }
+        .user-name {
+          font-size: 16px;
+          color: #222;
+          font-weight: 500;
+          .name {
+            width: 96px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-align: center;
+            text-overflow: ellipsis;
+            margin: 0 auto;
+          }
+          .user-vip {
+            position: relative;
+            top: 4px;
+            left: 7px;
+          }
+        }
+        .login-container {
+          padding: 0 15px;
+          flex-wrap: nowrap;
+          .container-title {
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px 0;
+          }
+          .icon-color{
+            font-size: 20px;
+            color: #FFC300;
           }
         }
       }

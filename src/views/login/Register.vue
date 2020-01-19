@@ -24,6 +24,10 @@
             />
           </FormItem>
         </Form>
+        <div class="pass flex" v-if="flag">
+          <Icon type="md-checkbox" color="green" />
+          <div>验证通过</div>
+        </div>
       </div>
       <Button type="info" size="small" class="gain-code" v-if="!retry" @click="sendCode">免费获取短信动态码</Button>
       <Button type="info" size="small" class="gain-code" disabled v-else>{{retry}}秒后再试</Button>
@@ -58,6 +62,10 @@
             />
           </FormItem>
         </Form>
+        <div class="pass flex" v-if="flag2">
+          <Icon type="md-checkbox" color="green" />
+          <div>验证通过</div>
+        </div>
       </div>
       <!-- <div class="flex vertical-center"></div> -->
       <!-- 密码验证 -->
@@ -101,6 +109,10 @@
             />
           </FormItem>
         </Form>
+        <div class="pass flex" v-if="flag1">
+          <Icon type="md-checkbox" color="green" />
+          <div>验证通过</div>
+        </div>
       </div>
       <!-- <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
         <FormItem>
@@ -125,11 +137,16 @@ export default {
     //验证手机号
     const validatePhone = (rule, value, callback) => {
       if (value === "") {
+        this.flag = false;
         callback(new Error("请输入您用的手机号码"));
+        return;
       } else {
         if (value.length != 11 || !/^[1][3,4,5,7,8][0-9]{9}$/.test(value)) {
+          this.flag = false;
           callback(new Error("请输入正确的手机号码"));
+          return;
         }
+        this.flag = true;
         callback();
       }
     };
@@ -148,21 +165,31 @@ export default {
     //第二次验证密码
     const validatePassCheck = (rule, value, callback) => {
       if (value === "") {
+        this.flag1 = false;
         callback(new Error("请确认密码"));
+        return
       } else if (value !== this.formInline.passwd) {
+        this.flag1 = false;
         callback(new Error("两次密码不同"));
+        return
       } else {
+        this.flag1 = true;
         callback();
       }
     };
     //验证邮箱
     const validateEmail = (rule, value, callback) => {
       if (value === "") {
+        this.flag2 = false;
         callback(new Error("请输入您用的邮箱号码"));
+        return
       } else {
         if (!/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value)) {
+          this.flag2 = false;
           callback(new Error("请输入正确的邮箱号码"));
+          return
         }
+        this.flag2 = true;
         callback();
       }
     };
@@ -172,6 +199,9 @@ export default {
       retry: "", // 5秒倒计时
       dataTimer: 5, // 5秒倒计时;
       timer: null,
+      flag: false,
+      flag1: false,
+      flag2: false,
       formInline: {
         phone: "",
         username: "",
@@ -264,7 +294,7 @@ export default {
           .then(res => {
             if (res.code === 200) {
               this.$Message.success(res.msg);
-              this.$router.push("/login")
+              this.$router.push("/login");
             }
             if (res.code === 500) {
               this.$Message.error(res.msg);
@@ -414,6 +444,10 @@ export default {
     font-size: 13px;
     color: #fe8c00;
   }
+}
+.pass {
+  margin-left: 150px;
+  align-items: center;
 }
 #inputValue {
   width: 260px;
