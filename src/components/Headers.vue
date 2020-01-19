@@ -6,7 +6,7 @@
         <div class="header-bar-position ivu__icon">
           <Icon type="md-pin" />
           <div>{{this.$store.state.city}}</div>
-          <div class="change-city">切换城市</div>
+          <div class="change-city" @click="changeCity">切换城市</div>
           <div class="near-citys">
             [
             <span
@@ -28,7 +28,7 @@
     <div style="background-color: rgb(255, 255, 255);box-shadow: 0 2px 27px 0 rgba(0,0,0,0.10);">
       <div class="header-content contentBottom">
         <div class="header-title">
-          <img src="//s0.meituan.net/bs/fe-web-meituan/fa5f0f0/img/logo.png" alt />
+          <img @click="goHome" src="//s0.meituan.net/bs/fe-web-meituan/fa5f0f0/img/logo.png" alt />
         </div>
         <div class="header-search">
           <Search :city="this.$store.state.city"></Search>
@@ -95,6 +95,14 @@ export default {
     },
     register() {
       this.$router.push("/register");
+    },
+    //手动修改城市
+    changeCity() {
+      this.$router.push("/changecity");
+    },
+    //返回首页
+    goHome() {
+      this.$router.push("/");
     }
   },
   mounted() {
@@ -166,7 +174,6 @@ export default {
 .header-content {
   max-width: 1190px;
   min-width: 1080px;
-  height: 157px;
   margin: 0 auto;
   // background-color: skyblue;
   display: flex;

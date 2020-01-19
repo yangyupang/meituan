@@ -28,7 +28,7 @@ export default {
     //获取省份所有城市 
     //id为获取省份后得到的id
     //id也可以是获取省市关联得到的id
-    getProvinces(id) {
+    getCitys(id) {
         return service.req(`/citys/${id}`)
     },
     //省市关联
