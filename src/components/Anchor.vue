@@ -40,7 +40,36 @@ export default {
   },
   components: {},
   methods: {
-    change(name) {}
+    recentsCity(name) {
+      setTimeout(() => {
+        if (name !== "") {
+          if (!localStorage.getItem("recentsCity")) {
+            let city = [];
+            city.push(name);
+            localStorage.setItem("recentsCity", JSON.stringify(city));
+            console.log(name);
+          } else if (localStorage.getItem("recentsCity")) {
+            let cityArr = JSON.parse(localStorage.getItem("recentsCity"));
+            if (!cityArr.some(item => item === name)) {
+              let citys = JSON.parse(localStorage.getItem("recentsCity"));
+              citys.unshift(name);
+              localStorage.setItem("recentsCity", JSON.stringify(citys));
+            } else {
+              let haveCity = cityArr.filter(item => {
+                return item !== name;
+              });
+              haveCity.unshift(name);
+              localStorage.setItem("recentsCity", JSON.stringify(haveCity));
+            }
+          }
+        }
+      }, 500);
+    },
+    change(name) {
+      this.$store.state.city = name;
+      this.recentsCity(name);
+      this.$router.push("/");
+    }
   },
   mounted() {},
   watch: {},

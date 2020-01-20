@@ -5,7 +5,7 @@
         <!-- 左边 -->
         <div class="header-bar-position ivu__icon">
           <Icon type="md-pin" />
-          <div>{{this.$store.state.city}}</div>
+          <div>{{this.$store.state.city || this.city[0]}}</div>
           <div class="change-city" @click="changeCity">切换城市</div>
           <div class="near-citys">
             [
@@ -29,9 +29,25 @@
       <div class="header-content contentBottom">
         <div class="header-title">
           <img @click="goHome" src="//s0.meituan.net/bs/fe-web-meituan/fa5f0f0/img/logo.png" alt />
+          <ul class="header-categorys-block" :style="{display:(isShow ? 'block':'none')}">
+            <li class="header-categorys-all" @mouseleave="mouseShow(-2)" @mouseenter="mouseShow(2)">
+              全部分类
+              <span class="after" :class="[flag>0 ?'veer':'']"></span>
+            </li>
+            <div
+              class="header-categorys-list"
+              @mouseenter="mouseShow(1)"
+              @mouseleave="mouseShow(-1)"
+              :style="{display:(flag>0 ? 'block':'none')}"
+            >
+              <li class="line-heights" v-for="(item,index) in menuList" :key="index">
+                <span>{{item.name }}</span>
+              </li>
+            </div>
+          </ul>
         </div>
         <div class="header-search">
-          <Search :city="this.$store.state.city"></Search>
+          <Search :city="this.$store.state.city || this.city[0]"></Search>
         </div>
       </div>
     </div>
@@ -44,9 +60,17 @@ import Right from "../components/Headers/Right";
 export default {
   data() {
     return {
-      // city: "",
-      areasList: []
+      city: "",
+      areasList: [],
+      menuList: [],
+      flag: 0
     };
+  },
+  props: {
+    isShow: {
+      type: Boolean,
+      default: false
+    }
   },
   components: { Search, Right },
   methods: {
@@ -56,11 +80,8 @@ export default {
         .getPosition()
         .then(res => {
           if (res.code === 200) {
-            // console.log(res);
             this.$store.state.city = JSON.parse(res.data).city;
-            // this.city = eval("(" + res.data + ")").city;
             this.$store.state.city = this.$store.state.city.slice(0, -1);
-            // console.log(this.city);
             this.getHotCity();
           }
         })
@@ -69,9 +90,9 @@ export default {
         });
     },
     getHotCity() {
-      if (this.$store.state.city !== "") {
+      if (this.$store.state.city !== "" || this.city[0] !== "") {
         this.$api
-          .getHotCity(this.$store.state.city)
+          .getHotCity(this.$store.state.city || this.city[0])
           .then(res => {
             if (res.code === 200) {
               this.areasList = res.data.areas;
@@ -103,14 +124,46 @@ export default {
     //返回首页
     goHome() {
       this.$router.push("/");
+    },
+    //获取分类
+    getMenu() {
+      this.$api
+        .getMenu()
+        .then(res => {
+          if (res.code === 200) {
+            this.menuList = res.data.menu;
+            // console.log(this.menuList);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    //鼠标移入移出  控制盒子显示隐藏
+    mouseShow(n) {
+      this.flag += n;
     }
   },
   mounted() {
-    this.getPosition();
+    if (!localStorage.getItem("recentsCity")) {
+      this.getPosition();
+    } else {
+      this.city = JSON.parse(localStorage.getItem("recentsCity")).slice(0, 1);
+      // console.log(this.city);
+      this.getHotCity();
+    }
+    this.getMenu();
+    // console.log(this.showName);
   },
   watch: {},
   computed: {},
-  filters: {}
+  filters: {
+    showName(val) {
+      let arr = [];
+      arr = val.split("/");
+      return arr;
+    }
+  }
 };
 </script>
 
@@ -190,7 +243,61 @@ export default {
       width: 126px;
       height: 46px;
     }
+    //搜索后跳转多出来的
+    .header-categorys-block {
+      background: #fff;
+      position: relative;
+      bottom: 15px;
+      color: #999;
+      font-size: 12px;
+      margin-left: 145px;
+      border: 1px solid #e5e5e5;
+      border-radius: 4px;
+      margin-top: -26px;
+      .header-categorys-all {
+        padding: 3px 13px 3px 4px;
+        cursor: pointer;
+        .after {
+          width: 4px;
+          height: 4px;
+          border-bottom: 1px solid #999;
+          border-right: 1px solid #999;
+          transform: rotate(45deg);
+          display: block;
+          position: absolute;
+          right: 5px;
+          bottom: 10px;
+          transition: all 0.2s;
+        }
+        .veer {
+          transform: rotate(225deg);
+        }
+      }
+      .header-categorys-list {
+        display: block;
+        position: absolute;
+        z-index: 1000;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
+        border-bottom-left-radius: 2px;
+        border-bottom-right-radius: 2px;
+        left: -1px;
+        padding: 15px 40px 12px 10px;
+        .line-heights {
+          line-height: 2.4;
+          white-space: nowrap;
+          span {
+            cursor: pointer;
+            &:hover {
+              color: #fe8c00;
+            }
+          }
+        }
+      }
+    }
   }
+
   //搜索框
   .header-search {
     float: left;

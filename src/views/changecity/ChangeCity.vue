@@ -1,15 +1,17 @@
 <template>
-  <div class="bgColor">
+  <div class="bgColor" @click.stop="close">
     <Headers></Headers>
     <div>
       <div class="page">
         <div class="op-area flex">
+          <!-- 选择省份城市 -->
           <div class="choose-by-province flex">
             <h3 class="l-attr">按省份选择：</h3>
             <div>
-              <div class="province-choose" v-text="province" @click="provinceChoose"></div>
+              <div class="province-choose" v-text="province" @click.stop="provinceChoose"></div>
               <Icon type="md-arrow-dropdown" class="province-chooseicon" />
             </div>
+            <!-- 省份列表展示 -->
             <div class="province-list" :style="{ display:(chooseProvince? 'none':'block')}">
               <p>省份</p>
               <div class="provinces-wrapper flex">
@@ -22,16 +24,17 @@
               <div class="list-triangle-before"></div>
               <div class="list-triangle-after"></div>
             </div>
-            <!-- :style="{pointer-events:( chooseCity? 'none': 'initial')}" -->
+            <!-- 城市选择框 -->
             <div style="cursor:not-allowed;">
               <div
                 class="city-choose"
                 v-text="city"
-                @click="provinceCity"
+                @click.stop="provinceCity"
                 :style="{pointerEvents:(chooseCity? 'none':'initial')}"
               ></div>
               <Icon type="md-arrow-dropdown" class="city-chooseicon" />
             </div>
+            <!-- 点击城市选择后展示城市用的 -->
             <div class="cities-list" :style="{ display:(chooseCities? 'none':'block')}">
               <p>城市</p>
               <div class="cities-wrapper flex">
@@ -41,16 +44,32 @@
                     class="city-name"
                     @click="chooseCit(item.name,item.id)"
                   >{{item.name}}</div>
-                  <div v-else class="city-name">{{item.province}}</div>
+                  <div v-else class="city-name" @click="chooseCits(item.province)">{{item.province}}</div>
                 </div>
               </div>
               <div class="list-triangle-before"></div>
               <div class="list-triangle-after"></div>
             </div>
           </div>
+          <!-- 直接收拾城市 -->
           <div class="search flex">
             <h3 class="l-attr">直接搜索：</h3>
             <input type="text" placeholder="请输入城市中文或拼音" class="search-text" v-model="searchValue" />
+          </div>
+          <div class="suggest-city-containner" v-if="searchValue.trim() !== '' ">
+            <div class="list-triangle-before"></div>
+            <div class="suggest-city" v-if="DataList.length === 0">
+              <div class="city">未找到匹配城市</div>
+            </div>
+            <div class="suggest-city" v-else>
+              <div
+                class="city"
+                v-for="item in DataList"
+                :key="item.id"
+                @click="change(item.name)"
+              >{{item.name}}</div>
+            </div>
+            <div class="list-triangle-after"></div>
           </div>
         </div>
         <div class="hotcity flex">
@@ -64,18 +83,14 @@
             >{{item.name}}</div>
           </div>
         </div>
-        <div class="recents flex">
+        <!-- 最近访问的城市 -->
+        <div class="recents flex" v-if="recentsList.length >0">
           <h3 class="l-attr">最近访问:</h3>
           <div class="r-info flex">
-            <div
-              class="city"
-              v-for="item in citys.data.hotCities"
-              :key="item.id"
-              @click="change(item.name)"
-            >{{item.name}}</div>
+            <div class="city" v-for="item in recentsList" :key="item" @click="change(item)">{{item}}</div>
           </div>
         </div>
-        <Anchor :citys=citys></Anchor>
+        <Anchor :citys="citys"></Anchor>
       </div>
     </div>
     <Footers></Footers>
@@ -108,7 +123,7 @@ export default {
       citiesname: []
     };
   },
-  components: { Headers, Footers ,Anchor},
+  components: { Headers, Footers, Anchor },
   methods: {
     getProvinces() {
       this.$api
@@ -121,6 +136,14 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    close() {
+      if (this.chooseCities === false) {
+        this.chooseCities = true;
+      }
+      if (this.chooseProvince === false) {
+        this.chooseProvince = true;
+      }
     },
     choosePro(name, id) {
       this.province = name;
@@ -139,6 +162,16 @@ export default {
     },
     chooseCit(name, id) {
       this.city = name;
+      this.$store.state.city = name.slice(0, -1);
+      this.recentsCity(name.slice(0, -1));
+      this.$router.push("/");
+      this.chooseCities = true;
+    },
+    chooseCits(name) {
+      this.city = name;
+      this.$store.state.city = name.slice(0, -1);
+      this.recentsCity(name.slice(0, -1));
+      this.$router.push("/");
       this.chooseCities = true;
     },
     provinceChoose() {
@@ -155,17 +188,53 @@ export default {
       });
     },
     //改变定位地址
-    change(name) {}
+    change(name) {
+      this.$store.state.city = name;
+      this.recentsCity(name);
+      this.$router.push("/");
+    },
+    //存最近访问
+    recentsCity(name) {
+      setTimeout(() => {
+        if (name !== "") {
+          if (!localStorage.getItem("recentsCity")) {
+            let city = [];
+            city.push(name);
+            localStorage.setItem("recentsCity", JSON.stringify(city));
+            console.log(name);
+          } else if (localStorage.getItem("recentsCity")) {
+            let cityArr = JSON.parse(localStorage.getItem("recentsCity"));
+            if (!cityArr.some(item => item === name)) {
+              let citys = JSON.parse(localStorage.getItem("recentsCity"));
+              citys.unshift(name);
+              localStorage.setItem("recentsCity", JSON.stringify(citys));
+            } else {
+              let haveCity = cityArr.filter(item => {
+                return item !== name;
+              });
+              haveCity.unshift(name);
+              localStorage.setItem("recentsCity", JSON.stringify(haveCity));
+            }
+          }
+        }
+      }, 500);
+    }
   },
   mounted() {
     this.getProvinces();
+    this.getList();
   },
   watch: {},
   computed: {
     DataList() {
-      return this.citiesname.filter(item =>
-        JSON.stringify(item).includes(this.searchValue)
-      );
+      return this.citiesname.filter(item => {
+        return JSON.stringify(item).includes(this.searchValue);
+      });
+    },
+    recentsList() {
+      if (localStorage.getItem("recentsCity")) {
+        return JSON.parse(localStorage.getItem("recentsCity"));
+      } else return [];
     }
   },
   filters: {}
@@ -231,6 +300,7 @@ export default {
           border: 1px solid #e5e5e5;
           box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
           border-radius: 4px;
+          z-index: 1;
           p {
             font-size: 16px;
             color: #ccc;
@@ -273,6 +343,7 @@ export default {
           border: 1px solid #e5e5e5;
           box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
           border-radius: 4px;
+          z-index: 1;
           p {
             font-size: 16px;
             color: #ccc;
@@ -327,6 +398,9 @@ export default {
       .city {
         cursor: pointer;
         margin: 0 20px;
+        &:hover {
+          color: #222222;
+        }
       }
     }
     .recents {
@@ -336,6 +410,9 @@ export default {
       .city {
         cursor: pointer;
         margin: 0 20px;
+        &:hover {
+          color: #222222;
+        }
       }
     }
   }
@@ -367,7 +444,7 @@ export default {
 }
 .list-triangle-before {
   position: absolute;
-  top: -7px;
+  top: -6px;
   left: 26px;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
@@ -382,6 +459,40 @@ export default {
   border-right: 6px solid transparent;
   border-bottom: 6px solid #fff;
   border-top: 0;
+}
+.suggest-city-containner {
+  position: absolute;
+  cursor: default;
+  top: 46px;
+  left: 548px;
+  border-radius: 4px;
+  z-index: 1;
+  .suggest-city {
+    overflow-y: scroll;
+    min-width: 150px;
+    max-height: 375px;
+    padding: 0 20px 0 15px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
+    .city {
+      cursor: pointer;
+      font-size: 12px;
+      color: #666;
+      display: block;
+      box-sizing: border-box;
+      min-width: 40px;
+      height: 20px;
+      padding: 1px 8px;
+      margin: 6px 38px 6px 0;
+      white-space: nowrap;
+      &:hover {
+        color: #222222;
+      }
+    }
+  }
 }
 
 // .choosebg {

@@ -207,12 +207,6 @@ export default {
         this.showImg = true;
       }
     };
-    // window.addEventListener("resize", e => {
-    //   // console.log(e);
-    //   let offsetWid = document.documentElement.clientWidth;
-    //   // console.log(offsetWid);
-    // });
-    // console.log(this.$store.state.userName);
   },
   watch: {},
   computed: {},
@@ -267,6 +261,7 @@ export default {
             padding: 2px 12px;
             height: 26px;
             cursor: pointer;
+            align-items: center;
             .iconfont {
               font-weight: normal !important;
             }
@@ -523,9 +518,9 @@ export default {
             font-size: 12px;
             margin: 5px 0;
           }
-          .icon-color{
+          .icon-color {
             font-size: 20px;
-            color: #FFC300;
+            color: #ffc300;
           }
         }
       }
