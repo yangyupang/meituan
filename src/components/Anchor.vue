@@ -12,7 +12,12 @@
       </Anchor>
     </div>
     <div class="alphabet-city-area" v-if="citys.data.cities">
-      <div class="city-area" v-for="(item,index) in citys.data.cities" :key="index" :id="index">
+      <div
+        class="city-area"
+        v-for="(item,index) in this.citys.data.cities"
+        :key="index"
+        :id="index"
+      >
         <span class="city-label">{{index}}</span>
         <span class="cities">
           <div
@@ -20,6 +25,7 @@
             :key="index"
             class="city"
             @click="change(item0.name)"
+            :style="{ color:item0.id===1?'#ffd000': '#666'}"
           >{{item0.name}}</div>
         </span>
       </div>
@@ -69,9 +75,27 @@ export default {
       this.$store.state.city = name;
       this.recentsCity(name);
       this.$router.push("/");
+    },
+    colorCity() {
+      for (let i in this.citys.data.cities) {
+        for (let j in this.citys.data.cities[i]) {
+          for (let k in this.citys.data.hotCities) {
+            if (
+              this.citys.data.cities[i][j].name ===
+              this.citys.data.hotCities[k].name
+            ) {
+              this.citys.data.cities[i][j].id = 1;
+              // return this.citys.data.cities;
+            }
+          }
+        }
+      }
     }
   },
-  mounted() {},
+  mounted() {
+    //  console.log(this.colorCity);
+    this.colorCity();
+  },
   watch: {},
   computed: {},
   filters: {}

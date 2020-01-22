@@ -133,6 +133,7 @@ export default {
           if (res.code === 200) {
             this.menuList = res.data.menu;
             // console.log(this.menuList);
+            // this.$emit('func', res.data.menu)
           }
         })
         .catch(err => {

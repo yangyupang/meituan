@@ -223,6 +223,7 @@ export default {
   mounted() {
     this.getProvinces();
     this.getList();
+
   },
   watch: {},
   computed: {

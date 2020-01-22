@@ -52,7 +52,8 @@ export default {
       styleList: ["全部", "约会聚餐", "丽人SPA", "电影演出", "品质出游"],
       nameList: ["景点", " 美食", "丽人", "电影", "旅游"],
       num: 0,
-      storeList: []
+      storeList: [],
+      city:""
     };
   },
   components: {},
@@ -61,10 +62,10 @@ export default {
     getResults(index) {
       clearTimeout(this.timeer)
       this.num = index;
-      if (this.$store.state.city !== "") {
+      if (this.$store.state.city !== "" || this.city[0] !== "") {
         this.timeer = setTimeout(() => {
           this.$api
-            .getResults(this.$store.state.city, this.nameList[index])
+            .getResults((this.$store.state.city || this.city[0]), this.nameList[index])
             .then(res => {
               if (res.code === 200) {
                 this.storeList = res.data.pois;
@@ -82,6 +83,10 @@ export default {
     setTimeout(() => {
       this.getResults(0);
     }, 330);
+    if(localStorage.getItem("recentsCity"))
+    {
+       this.city = JSON.parse(localStorage.getItem("recentsCity")).slice(0, 1);
+    }
   },
   watch: {},
   computed: {},
