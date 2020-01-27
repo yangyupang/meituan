@@ -9,7 +9,7 @@
           <div class="crumb-item">{{city[0]}}{{this.$store.state.searchValue}}</div>
         </div>
         <div class="center-content flex">
-          <div class="left-content">
+          <div class="left-content ivu__page">
             <!-- 左边内容头部 分类和区域 -->
             <div class="filter-box">
               <div class="filter-section-wrapper">
@@ -122,13 +122,12 @@
                   </div>
                 </div>
               </div>
+              <SearchDetails :searchList="historyData"></SearchDetails>
             </div>
+            <Page :total="searchList.length" :page-size="pageSize" @on-change="change" />
           </div>
           <div class="right-content">
-            <div v-for="item in mergeList" :key="item.name">
-              <div v-if="item.name">{{item.child}}</div>
-              <div v-else>{{item.module}}</div>
-            </div>
+            <Positioning :position="historyData"></Positioning>
           </div>
         </div>
       </div>
@@ -140,6 +139,8 @@
 <script>
 import Headers from "../../../src/components/Headers";
 import Footers from "../../../src/components/Footers";
+import SearchDetails from "../../../src/components/SearchDetails";
+import Positioning from "../../../src/components/Positioning";
 export default {
   data() {
     return {
@@ -150,10 +151,13 @@ export default {
       mergeList: [],
       tileLists: [],
       names: "",
-      flag: 0
+      flag: 0,
+      searchList: [],
+      pageSize: 10,
+      historyData: []
     };
   },
-  components: { Headers, Footers },
+  components: { Headers, Footers, SearchDetails, Positioning },
   methods: {
     //获取分类
     getMenu() {
@@ -184,6 +188,24 @@ export default {
             console.log(object);
           });
       }
+    },
+    //获取关键字对应的店铺
+    getResults() {
+      this.$api
+        .getResults(
+          this.$store.state.city || this.city[0],
+          this.$route.query.keyword
+        )
+        .then(res => {
+          if (res.code === 200) {
+            this.searchList = res.data.pois;
+            this.handleListApproveHistory();
+            // console.log(this.searchList);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     enter(item, num) {
       this.flag += num;
@@ -312,7 +334,21 @@ export default {
         arr.push(val);
       });
       this.mergeList = arr;
-      console.log(this.mergeList);
+      // console.log(this.mergeList);
+    },
+    change(index) {
+      let _start = (index - 1) * this.pageSize;
+      let _end = index * this.pageSize;
+      this.historyData = this.searchList.slice(_start, _end);
+    },
+    // 获取历史记录信息
+    handleListApproveHistory() {
+      // 初始化显示，小于每页显示条数，全显，大于每页显示条数，取前每页条数显示
+      if (this.searchList.length < this.pageSize) {
+        this.historyData = this.searchList;
+      } else {
+        this.historyData = this.searchList.slice(0, this.pageSize);
+      }
     }
   },
   mounted() {
@@ -324,6 +360,7 @@ export default {
     }
     this.getMenu();
     this.getHotCity();
+    this.getResults();
     // this.tileList();
   },
   watch: {},
@@ -570,8 +607,8 @@ export default {
       }
       .right-content {
         width: 230px;
-        min-height: 150px;
-        background: skyblue;
+        max-height: 220px;
+        // background: skyblue;
       }
     }
   }
